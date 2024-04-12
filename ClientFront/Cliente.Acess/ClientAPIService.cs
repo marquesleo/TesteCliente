@@ -1,6 +1,6 @@
 ﻿
 
-using Cliente.Acess.Model;
+using Application.DTO;
 using Cliente.Acess.Util;
 using Newtonsoft.Json;
 
@@ -8,13 +8,30 @@ namespace Cliente.Acess
 {
     public class ClientAPIService
     {
+
+        private AuthenticateResponse _token;
+        private AuthenticateResponse token
+        {
+            get
+            {
+                if (_token == null || _token?.expira < DateTime.Now)
+                    _token = GetToken();
+
+                return _token;
+            }
+        }
+        public ClientAPIService()
+        {
+            _token = GetToken();
+        }
         const string url = "https://localhost:7138";
         const string controller = "/api/client";
-        private async Task<RestBase> CreateBaseRequest(string path, string token)
+        private async Task<RestBase> CreateBaseRequest(string path, string token, bool buscaComtoken = true)
         {
           
             var rest = new RestBase($"{url}{path}");
-         //   rest.AddHeaders("Authorization", $"Bearer {token}");
+            if (buscaComtoken && !string.IsNullOrEmpty(token)) 
+                rest.AddHeaders("Authorization", $"Bearer {token}");
             rest.AddHeaders("Content-Type", "application/json");
             rest.AddHeaders("Accept", "*/*");
             rest.AddHeaders("Accept", "application/json");
@@ -27,7 +44,8 @@ namespace Cliente.Acess
 
             try
             {
-                var rest = await CreateBaseRequest(controller + "/"+ id,"");
+                
+                var rest = await CreateBaseRequest(controller + "/"+ id, token.token);
                 var response = rest.Client.Execute(rest.Request);
                 if (response.IsSuccessful)
                 {
@@ -46,13 +64,37 @@ namespace Cliente.Acess
 
         }
 
+        public AuthenticateResponse GetToken()
+        {
+
+            try
+            {
+                var rest =  CreateBaseRequest(controller + "/autenticar", "",false);
+                var response = rest.Result.Client.Execute(rest.Result.Request);
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<AuthenticateResponse>(response.Content);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw (new Exception($"Erro ao buscar token  ${ex.Message}"));
+            }
+            return null;
+
+        }
+
 
         public async Task<List<ClientDTO>> GetAll()
         {
 
             try
             {
-                var rest = await CreateBaseRequest(controller+ "/all", "");
+                var rest = await CreateBaseRequest(controller+ "/all", token.token);
                 var response = rest.Client.Execute(rest.Request);
                 if (response.IsSuccessful)
                 {
@@ -75,7 +117,7 @@ namespace Cliente.Acess
         {
             try
             {
-                var rest = await CreateBaseRequest(controller ,"");
+                var rest = await CreateBaseRequest(controller , token.token);
 
                 var json = JsonConvert.SerializeObject(cliente);
                 var response = await rest.PostAsync(cliente, useRetry: true);
@@ -102,7 +144,7 @@ namespace Cliente.Acess
         {
             try
             {
-                var rest = await CreateBaseRequest(controller +"/"+ id, "");
+                var rest = await CreateBaseRequest(controller +"/"+ id, token.token);
 
                 var response =  rest.Delete();
                 if (response.IsSuccessful)

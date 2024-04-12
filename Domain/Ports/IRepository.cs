@@ -14,6 +14,8 @@ namespace Domain.Ports
 
         public Task DeleteById(int id); 
 
+        public Task Update(T entity);
+
         public Task<IEnumerable<T>> GetAll();   
     }
 }

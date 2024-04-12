@@ -3,6 +3,7 @@ using Application.DTO;
 using Application.Ports;
 using Application.Reponses;
 using Application.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,20 +11,45 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ClientController : ControllerBase
     {
         private readonly IClientManager _clientManager;
+        private readonly IAuthenticationManager _authenticationManager;
         private readonly ILogger<ClientController> _logger;
 
-        public ClientController(IClientManager clientManager,
+        public ClientController( IClientManager clientManager,
+                                 IAuthenticationManager authenticationManager,
                                  ILogger<ClientController> logger)
         {
             this._clientManager = clientManager;
             this._logger = logger;
+            this._authenticationManager = authenticationManager;
         }
 
 
         [HttpGet]
+        [Route("autenticar")]
+        [AllowAnonymous]
+        public async Task<ActionResult<dynamic>> Authenticate()
+        {
+            try
+            {
+                var response = _authenticationManager.Authenticate("leonardo");
+                return Ok(response);
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+
+            }
+
+
+        }
+
+
+        [HttpGet("{id}")]
         public async Task<ActionResult<ClientDTO>> Get(int id)
         {
 
@@ -36,7 +62,19 @@ namespace API.Controllers
             else
                 return BadRequest(res);
         }
+        [HttpDelete("{id}")]
+      
+        public async Task<ActionResult<ClientResponse>> Delete(int id)
+        {
 
+            var res = await _clientManager.DeleteCliente(id);
+
+            if (res != null && res.Success)
+                return Ok(res);
+           
+            else
+                return BadRequest(res);
+        }
 
         [HttpGet]
         [Route("all")]

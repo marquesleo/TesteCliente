@@ -71,6 +71,30 @@ namespace Application
             }
         }
 
+        public async Task<ClientResponse> DeleteCliente(int id)
+        {
+            try
+            {
+                var client = await _clientRepository.GetById(id);
+                await client.Excluir(_clientRepository);
+                return new ClientResponse()
+                {
+                    Message = "Client deleted", 
+                    Success = true
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new ClientResponse()
+                {
+                    Message = ex.Message,
+                    Success = false
+                };
+            }
+            
+        }
+
         public async Task<ClientResponse> GetClient(int id)
         {
             var client = await _clientRepository
@@ -115,5 +139,10 @@ namespace Application
             return lstClientes;
         
         }
-}
+
+        public async Task<ClientResponse> UpdateClient(CreateClientRequest request)
+        {
+            return await CreateClient(request);
+        }
+    }
 }

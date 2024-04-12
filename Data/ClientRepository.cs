@@ -46,5 +46,12 @@ namespace Data
             await _clientDbContext.SaveChangesAsync();
             return entity;
         }
+
+        public async Task Update(Client entity)
+        {
+            _clientDbContext.Clients.Update(entity);
+            await _clientDbContext.SaveChangesAsync();
+            
+        }
     }
 }

@@ -18,9 +18,11 @@ namespace Domain.Entities
         {
             if (!string.IsNullOrWhiteSpace(this.Email)) {
                 var lstClientesEmail = await repository.GetClientByEmail(this.Email);
-                if (lstClientesEmail == null || lstClientesEmail.Any())
-                {
-                    throw new Exceptions.EmailDuplicateException();
+                if (this.Id == 0) {
+                    if (lstClientesEmail == null || lstClientesEmail.Any())
+                    {
+                        throw new Exceptions.EmailDuplicateException();
+                    }
                 }
 
                 if (!this.IsValidEmail(this.Email))
@@ -65,9 +67,16 @@ namespace Domain.Entities
             }
             else
             {
-
+                await repository.Update(this);
+                client = this;
             }
             return client.Id;
+        }
+
+
+        public async Task Excluir(IClientRepository repository)
+        {
+            await repository.DeleteById(this.Id);
         }
     }
 }

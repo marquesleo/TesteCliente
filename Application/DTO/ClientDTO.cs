@@ -52,6 +52,7 @@ namespace Application.DTO
 
             if (dto.Address != null && dto.Address.Any())
             {
+                client.AddressList = new List<Domain.Entities.Address>();
                 foreach (var addressDTO in dto.Address)
                 {
                     var address = new Domain.Entities.Address

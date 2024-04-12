@@ -16,6 +16,11 @@ namespace Application.Ports
 
         public Task<ClientResponse> CreateClient(CreateClientRequest request);
 
+        public Task<ClientResponse> UpdateClient(CreateClientRequest request);
+
+        public Task<ClientResponse> DeleteCliente(int id);
+
+
         public Task<IEnumerable<ClientDTO>> GetClients();
 
 
