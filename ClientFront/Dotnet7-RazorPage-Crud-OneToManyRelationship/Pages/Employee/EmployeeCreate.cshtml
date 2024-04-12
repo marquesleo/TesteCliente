@@ -1,0 +1,44 @@
+@page "/employee/create"
+@model dot7.razor.crudsample.Pages.Employee.EmployeeCreate
+
+<div class="container">
+    <div class="row">
+        <div class="col col-md-6 offset-md-3">
+            <form method="post">
+                <legend>Add Cliente</legend>
+                <div class="mb-3">
+                    <label for="txtfirstName" class="form-label">Nome</label>
+                    <input asp-for="NewClient.Name" type="text" class="form-control" id="txtfirstName" required />
+                </div>
+                <div class="mb-3">
+                    <label for="txtlastName" class="form-label">E-mail</label>
+                    <input asp-for="NewClient.Email" type="email" class="form-control" id="txtlastName" />
+                </div>
+              
+                @for (int i = 0; i <= 1; i++)
+                {
+                    <div class="row">
+
+                        <legend>Address @i</legend>
+                        <div class="mb-3">
+                            <label for="txtCity" class="form-label">Address Id</label>
+                            <input asp-for="NewClient.Addresses[i].Id" type="text"
+                            class="form-control" readonly />
+                        </div>
+                        <div class="mb-3">
+                            <label for="txtCity" class="form-label">Rua</label>
+                            <input asp-for="NewClient.Addresses[i].Street" type="text" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="txtCity" class="form-label">CEP</label>
+                            <input asp-for="NewClient.Addresses[i].ZipCode" type="text" class="form-control" />
+                        </div>
+
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
