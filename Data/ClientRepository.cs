@@ -35,6 +35,11 @@ namespace Data
                .Where(g => g.Id == id).Include(r=> r.AddressList).FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<Client>> GetClientByEmail(string email)
+        {
+            return await _clientDbContext.Clients.Where(c => c.Email.ToLower() == email.ToLower()).ToListAsync();
+        }
+
         public async Task<Client> Save(Client entity)
         {
             _clientDbContext.Clients.Add(entity);

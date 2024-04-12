@@ -15,9 +15,7 @@ namespace Application.DTO
         public string Email { get; set; }
 
         public IList<AddressDTO> Address { get; set; }   
-        
-        public static 
-
+       
         public static ClientDTO MapToDTO(Domain.Entities.Client client)
         {
           var cliente =  new ClientDTO()
@@ -41,6 +39,33 @@ namespace Application.DTO
                 }
             }
             return cliente;
+        }
+
+        public static Domain.Entities.Client MapToEntity(ClientDTO dto)
+        {
+            var client = new Domain.Entities.Client
+            {
+                Name = dto.Name,
+                Email = dto.Email,
+                Id = dto.Id
+            };
+
+            if (dto.Address != null && dto.Address.Any())
+            {
+                foreach (var addressDTO in dto.Address)
+                {
+                    var address = new Domain.Entities.Address
+                    {
+                        Id = addressDTO.Id,
+                        ClientId = client.Id,
+                        Street = addressDTO.Street,
+                        ZipCode = addressDTO.ZipCode,
+                        Client = client
+                    };
+                    client.AddressList.Add(address);
+                }
+            }
+            return client;
         }
     }
 }

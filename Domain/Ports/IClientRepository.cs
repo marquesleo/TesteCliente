@@ -9,6 +9,7 @@ namespace Domain.Ports
 {
     public interface IClientRepository: IRepository<Client>
     {
+        Task<IEnumerable<Client>> GetClientByEmail(string email);   
 
     }
 }

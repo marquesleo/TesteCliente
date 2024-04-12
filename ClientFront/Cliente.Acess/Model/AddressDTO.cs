@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.DTO
+namespace Cliente.Acess.Model
 {
     public class AddressDTO
     {
@@ -14,4 +14,3 @@ namespace Application.DTO
         public string ZipCode { get; set; }
     }
 }
-

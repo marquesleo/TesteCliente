@@ -2,6 +2,7 @@
 using Application.Ports;
 using Application.Reponses;
 using Application.Requests;
+using Domain.Exceptions;
 using Domain.Ports;
 
 namespace Application
@@ -10,8 +11,7 @@ namespace Application
     {
 
         private IClientRepository _clientRepository;
-
-
+        
         public ClientManager(IClientRepository clientRepository)
         {
             _clientRepository = clientRepository;
@@ -20,38 +20,38 @@ namespace Application
         {
             try
             {
-                var guest = GuestDTO.MapToEntity(request.Data);
+                var cliente = ClientDTO.MapToEntity(request.Data);
 
-                await guest.Save(_guestRepository);
-                request.Data.Id = guest.Id;
+                await cliente.Save(_clientRepository);
+                request.Data.Id = cliente.Id;
 
-                return new GuestResponse
+                return new ClientResponse
                 {
                     Data = request.Data,
                     Success = true
                 };
             }
-            catch (InvalidPersonDocumentIdException e)
+            catch (AddressDuplicateException)
             {
-                return new GuestResponse
+                return new ClientResponse
                 {
                     Success = false,
-                    ErrorCode = ErrorCodes.INVALID_ID_PERSON_ID,
-                    Message = "The Id passed id not valid",
+                    ErrorCode = ErrorCodes.ADDRESS_DUPLICATE,
+                    Message = ErrorCodes.ADDRESS_DUPLICATE.ToString(),
                 };
             }
-            catch (MissingRequiredInformation e)
+            catch (EmailDuplicateException)
             {
-                return new GuestResponse
+                return new ClientResponse
                 {
                     Success = false,
-                    ErrorCode = ErrorCodes.MISSING_REQUIRED_INFORMATION,
-                    Message = "Missing Required Information",
+                    ErrorCode = ErrorCodes.EMAIL_DUPLICATE,
+                    Message = ErrorCodes.EMAIL_DUPLICATE.ToString(),
                 };
             }
             catch (InvalidEmailException e)
             {
-                return new GuestResponse
+                return new ClientResponse
                 {
                     Success = false,
                     ErrorCode = ErrorCodes.INVALID_EMAIL,
@@ -60,7 +60,7 @@ namespace Application
             }
             catch (Exception ex)
             {
-                return new GuestResponse
+                return new ClientResponse
                 {
 
                     Success = false,
