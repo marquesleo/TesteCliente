@@ -1,0 +1,7 @@
+-projeto criado com arquitetura hexagonal 
+-web api .net 7 
+-entity framework 
+-sql server local 
+-front-end criado com asp.mvc 
+-jwt autenticacao
+-
